@@ -1,0 +1,25 @@
+# Exclude folderul config
+config/
+
+*.txt
+*.pptx
+
+# Exclude fișierele temporare și de sistem
+*.log
+*.tmp
+*.swp
+.DS_Store
+
+# Exclude fișierele de compilare și build
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+build/
+dist/
+*.egg-info/
+
+# Exclude fișierele de configurare pentru IDE-uri
+.vscode/
+.idea/
+*.iml
