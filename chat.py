@@ -1,14 +1,14 @@
 from typing import List, Tuple
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from globals import Global
-from initialize import initialize_llm, initialize_vectorstore
+from initialize import initialize_llm, initialize_DBpediaStore
 from extract import normalize_text  # Importă funcția normalize_text din extract.py
 
 class Chat:
     def __init__(self):
         # Inițializează modelul de limbaj (LLM) și vectorstore-ul
         self.llm = initialize_llm()
-        self.vectorstore = initialize_vectorstore()
+        self.DBpediaStore = initialize_DBpediaStore()
 
     def create_prompt(self, message: str) -> Tuple[str, List[str]]:
         """
@@ -27,18 +27,18 @@ class Chat:
             print(f"Performing context retrieval for: {normalized_message}")
 
             # Recuperează contextul din DBpedia folosind mesajul utilizatorului normalizat
-            docs = self.vectorstore.retrieve_context(query=normalized_message)
+            docs = self.DBpediaStore.retrieve_context(query=normalized_message)
         except Exception as exception:
             print(f"An error occurred during context retrieval: {exception}")
             return str(exception), context
 
         # Creează promptul adăugând contextul din DBpedia la mesajul utilizatorului
-        prompt = Global.config['PROMPT'] + message 
+        prompt = Global.config['PROMPT_QUESTION'] + normalized_message + Global.config['PROMPT'] 
         for doc in docs:
             prompt += doc + '\n'
             context.append(doc)
 
-        print(f"Prompt: {prompt}\n")
+        #print(f"Prompt: {prompt}\n")
         print(f"Context: {context}\n")
 
         return prompt, context

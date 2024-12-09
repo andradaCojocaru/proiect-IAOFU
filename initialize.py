@@ -1,7 +1,6 @@
 import os
 import openai
 from langchain_openai import ChatOpenAI
-from langchain_huggingface import HuggingFaceEmbeddings
 from globals import Global
 from dbpedia_store import DBpediaStore
 
@@ -22,27 +21,17 @@ def initialize_llm() -> ChatOpenAI:
     )
     return llm
 
-def initialize_vectorstore() -> DBpediaStore:
+def initialize_DBpediaStore() -> DBpediaStore:
     """
-    Inițializează vectorstore-ul folosind DBpedia și HuggingFaceEmbeddings.
+    Inițializează clasa DBpediaStore.
     
     Returns:
-        DBpediaStore: Instanța vectorstore-ului inițializat.
+        DBpediaStore: Instanța clasei DBpediaStore inițializat.
     """
-    # Setează parametrii pentru modelul de embeddings
-    model_kwargs = {'device': 'cpu'}
-    encode_kwargs = {'normalize_embeddings': False}
 
-    # Creează o instanță a DBpediaStore folosind embeddings de la HuggingFace
-    # Modelul de Embeddings folosit este "sentence-transformers/all-MiniLM-L6-v2",
-    # deoarece este un model foarte rapid și eficient
+    # Creează o instanță a DBpediaStore 
 
-    vectorstore = DBpediaStore(
-        embedding=HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            model_kwargs=model_kwargs,
-            encode_kwargs=encode_kwargs
-        ),
+    dbpediaStore = DBpediaStore(
         dbpedia_url=Global.config['DBPEDIA_URL']
     )
-    return vectorstore
+    return dbpediaStore

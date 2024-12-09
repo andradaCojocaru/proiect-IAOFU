@@ -7,17 +7,15 @@ import spacy
 DBPEDIA_SPARQL_URL = "https://dbpedia.org/sparql"
 
 class DBpediaStore:
-    def __init__(self, embedding: HuggingFaceEmbeddings, dbpedia_url: str = DBPEDIA_SPARQL_URL):
+    def __init__(self, dbpedia_url: str = DBPEDIA_SPARQL_URL):
         """
         Inițializează instanța DBpediaStore cu embeddings și URL-ul DBpedia.
         
         Args:
-            embedding (HuggingFaceEmbeddings): Instanța de embeddings.
             dbpedia_url (str): URL-ul endpoint-ului SPARQL al DBpedia.
         """
-        self.embedding = embedding
         self.dbpedia_url = dbpedia_url
-        self.nlp = spacy.load("en_core_web_sm")  # Load spaCy model for natural language processing
+        self.nlp = spacy.load("en_core_web_sm")  
 
     def extract_important_terms(self, query: str) -> str:
         """
@@ -32,11 +30,11 @@ class DBpediaStore:
         doc = self.nlp(query)
         entities = [ent.text for ent in doc.ents]  
         if entities:
-            return entities[0]  # Use the first recognized entity as the main term
+            return entities[0]  
         
-        # Fallback: Extract nouns and proper nouns if no entities are found
+        # Extrage substantivele și substantivele proprii din interogare
         keywords = [token.text for token in doc if token.pos_ in ("NOUN", "PROPN")]
-        return " ".join(keywords) if keywords else query  # Return keywords or the original query
+        return " ".join(keywords) if keywords else query  
 
     def get_dbpedia_context(self, query: str) -> str:
         """
@@ -49,7 +47,7 @@ class DBpediaStore:
             str: Contextul recuperat din DBpedia sau un mesaj de eroare.
         """
         processed_query = self.extract_important_terms(query)
-        print(f"Processed Query: {processed_query}")  # Debug: Show processed query
+        #print(f"Processed Query: {processed_query}")  # Debug: Show processed query
         sparql = SPARQLWrapper(self.dbpedia_url)
         sparql.setQuery(f"""
         PREFIX dbo: <http://dbpedia.org/ontology/>
@@ -81,7 +79,7 @@ class DBpediaStore:
         """
         # Recuperează contextul din DBpedia
         context = self.get_dbpedia_context(query)
-        print(f"Context recuperat: {context}")
+        #print(f"Context recuperat: {context}")
 
         # Returnează contextul ca o listă cu un singur element
         return [context] if context != "Nu există context suplimentar disponibil din DBpedia." else []

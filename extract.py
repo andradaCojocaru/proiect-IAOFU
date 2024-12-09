@@ -4,7 +4,7 @@ from globals import Global
 
 def normalize_text(text: str) -> str:
     """The function normalizes the text by removing links, hashtags, usernames (in case they appear),
-    makes the whole transcript lowercase and remove the punctuation.
+    and remove the punctuation.
     Args:
     text (str): The initial text before normalization
     Returns:
