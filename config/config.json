@@ -1,0 +1,12 @@
+{
+    "OPENAI_API_KEY": "",
+    "EMBEDDINGS": "dbpedia-embeddings-model",
+    "ORGANIZATION_ID": "org-FJmYT4UDPl93DH9gsBcIHXxg",
+    "DBPEDIA_URL": "https://dbpedia.org/sparql",
+    "NUM_CONTEXT_DOCS": 5,
+    "PROMPT": ". Please provide a detailed response as mentioned in the context:",
+    "PROMPT_QUESTION": "The question is:",
+    "SYSTEM_PROMPT": "You are a helpful assistant that will use the context provided by me to answear the question.",
+    "MAX_NUMBER_TOKENS": 512,
+    "OVERLAP": 128
+}
