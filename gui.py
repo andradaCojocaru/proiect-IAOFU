@@ -1,4 +1,10 @@
 import gradio as gr
+from ragas.llms import LangchainLLMWrapper
+from ragas.embeddings import LangchainEmbeddingsWrapper
+from langchain_openai import ChatOpenAI
+from langchain_openai import OpenAIEmbeddings
+from ragas import SingleTurnSample
+from ragas.metrics import ResponseRelevancy
 
 
 def handleGUI(chat):
@@ -11,15 +17,12 @@ def handleGUI(chat):
         Returns:
             None
         """
+    # Initialize the evaluator
+    evaluator_llm = LangchainLLMWrapper(ChatOpenAI(model="gpt-4o"))
+    evaluator_embeddings = LangchainEmbeddingsWrapper(OpenAIEmbeddings())
 
     dropdown_choices = ["DBPedia", "COSTAR"]
 
-    def chatbot_interface(selected_option, user_input, c=None, o=None, s=None, t=None, a=None, r=None):
-        chat.updateCostarData(selected_option, c, o, s, t, a, r)
-
-        response = chat.predict(user_input)
-
-        return response
 
     default_costar = {
         "CONTEXT": "",
@@ -72,6 +75,16 @@ def handleGUI(chat):
                     outputs=costar_inputs + [text_input]
                 )
 
+                async def evaluate_relevancy(your_message, context, response):
+                    sample = SingleTurnSample(
+                        user_input=your_message,
+                        response=response,
+                        retrieved_contexts=[context]
+                    )
+                    scorer = ResponseRelevancy(llm=evaluator_llm, embeddings=evaluator_embeddings)
+                    score = await scorer.single_turn_ascore(sample)
+                    return score
+
                 with gr.Row():
                     clear_button = gr.Button("Clear")
                     clear_button.variant = "secondary"
@@ -90,9 +103,22 @@ def handleGUI(chat):
 
             with gr.Column(scale=1):
                 output = gr.Textbox(label="Chatbot Response", lines=5)
+                relevancy_score = gr.Textbox(label="Relevancy Score", lines=1, interactive=False)
 
-        submit_button.click(chatbot_interface, inputs=[
-                            dropdown, text_input, *costar_inputs], outputs=output)
+        def chatbot_inference(selected_option, user_input, *costar_inputs):
+            chat.updateCostarData(selected_option, *costar_inputs)
+            response = chat.predict(user_input)
+            return response
 
+        async def combined_inference(dropdown, text_input, *costar_inputs):
+            response = chatbot_inference(dropdown, text_input, *costar_inputs)
+            relevancy = await evaluate_relevancy(text_input, costar_inputs[0], response)
+            return response, relevancy
+        
+        submit_button.click(
+            combined_inference,
+            inputs=[dropdown, text_input, *costar_inputs],
+            outputs=[output, relevancy_score]
+        )
     # Launch the Gradio interface
     demo.launch(share=True)
