@@ -49,17 +49,17 @@ def handleGUI(chat):
                 )
 
                 costar_inputs = [
-                    gr.Textbox(label=f"Context", lines=1,
+                    gr.Textbox(label=f"Context", lines=2,
                                value=default_costar['CONTEXT'], visible=False, max_lines=10),
-                    gr.Textbox(label=f"Objective", lines=1,
+                    gr.Textbox(label=f"Objective", lines=2,
                                value=default_costar['OBJECTIVE'], visible=False, max_lines=5),
                     gr.Textbox(
-                        label=f"Style", lines=1, value=default_costar['STYLE'], visible=False, max_lines=5),
+                        label=f"Style", lines=2, value=default_costar['STYLE'], visible=False, max_lines=5),
                     gr.Textbox(
-                        label=f"Tone", lines=1, value=default_costar['TONE'], visible=False, max_lines=5),
-                    gr.Textbox(label=f"Audience", lines=1,
+                        label=f"Tone", lines=2, value=default_costar['TONE'], visible=False, max_lines=5),
+                    gr.Textbox(label=f"Audience", lines=2,
                                value=default_costar['AUDIENCE'], visible=False, max_lines=5),
-                    gr.Textbox(label=f"Response", lines=1,
+                    gr.Textbox(label=f"Response", lines=2,
                                value=default_costar['RESPONSE'], visible=False, max_lines=5),
                 ]
 
